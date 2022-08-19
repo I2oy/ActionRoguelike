@@ -75,3 +75,10 @@ DerivedDataCache/*
 
 # RiderLink Plugin
 Plugins/Developer/RiderLink/*
+
+# HoloLens
+Config/HoloLens/*
+
+# __Externals & HLOD0
+Content/__External*/*
+Content/ActionRoguelike/Maps/*HLOD0*
