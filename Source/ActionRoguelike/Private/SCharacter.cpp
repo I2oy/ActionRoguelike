@@ -9,6 +9,8 @@
 #include "DrawDebugHelpers.h"
 #include "SAttributeComponent.h"
 #include "SInteractionComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
 ASCharacter::ASCharacter()
@@ -108,9 +110,23 @@ void ASCharacter::PrimaryAttack_TimeElapsed()
 {
 	if(ensure(ProjectileClass))
 	{
-		const FVector HandLocation  = GetMesh()->GetSocketLocation(TEXT("Muzzle_01"));
-	
-		const FTransform SpawnTM = FTransform(GetControlRotation(),HandLocation);
+		const FVector HandLocation  = GetMesh()->GetSocketLocation(TEXT("Muzzle_01"));		
+		FHitResult HitResult;
+		FCollisionObjectQueryParams QueryParams;
+		QueryParams.AddObjectTypesToQuery(ECC_WorldDynamic);
+		QueryParams.AddObjectTypesToQuery(ECC_WorldStatic);
+		
+		FVector CameraLocation = CameraComp->GetComponentLocation();
+		FVector CameraTargetLocation = CameraLocation + (CameraComp->GetForwardVector() * 20000);
+		FVector TargetEndLocation = CameraTargetLocation;
+		// See if theres an Object to target to in the distance.
+		// If not, aim deep towards where the camera is looking.
+		if(GetWorld()->LineTraceSingleByObjectType(HitResult, CameraLocation, CameraTargetLocation, QueryParams))
+		{
+			TargetEndLocation = HitResult.ImpactPoint;
+		}
+		FRotator PlayerRot = UKismetMathLibrary::FindLookAtRotation(HandLocation, TargetEndLocation);
+		const FTransform SpawnTM = FTransform(PlayerRot,HandLocation);
 
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
