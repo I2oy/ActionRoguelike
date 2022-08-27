@@ -76,6 +76,9 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 	PlayerInputComponent->BindAction(TEXT("PrimaryAttack"), IE_Pressed, this, &ASCharacter::PrimaryAttack);
 	PlayerInputComponent->BindAction(TEXT("PrimaryInteract"), IE_Pressed, this, &ASCharacter::PrimaryInteract);
+
+	PlayerInputComponent->BindAction(TEXT("SecondaryAttack"), IE_Pressed, this, &ASCharacter::SecondaryAttack);
+	
 	PlayerInputComponent->BindAction(TEXT("Jump"), IE_Pressed, this, &ASCharacter::Jump);
 }
 
@@ -108,7 +111,25 @@ void ASCharacter::PrimaryAttack()
 
 void ASCharacter::PrimaryAttack_TimeElapsed()
 {
-	if(ensure(ProjectileClass))
+	SpawnProjectile(BasicProjectile);
+}
+
+
+void ASCharacter::SecondaryAttack()
+{
+	PlayAnimMontage(AttackAnim);
+	
+	GetWorldTimerManager().SetTimer(TimerHandle_SecondaryAttack, this, &ASCharacter::SecondaryAttack_TimeElapsed, 0.2f);
+}
+
+void ASCharacter::SecondaryAttack_TimeElapsed()
+{
+	SpawnProjectile(BlackholeProjectile);
+}
+
+void ASCharacter::SpawnProjectile(TSubclassOf<AActor> Projectile)
+{
+	if(ensure(Projectile))
 	{
 		const FVector HandLocation  = GetMesh()->GetSocketLocation(TEXT("Muzzle_01"));		
 		FHitResult HitResult;
@@ -132,7 +153,7 @@ void ASCharacter::PrimaryAttack_TimeElapsed()
 		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 		SpawnParams.Instigator = this;
 	
-		GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTM, SpawnParams);
+		GetWorld()->SpawnActor<AActor>(Projectile, SpawnTM, SpawnParams);
 	}
 }
 

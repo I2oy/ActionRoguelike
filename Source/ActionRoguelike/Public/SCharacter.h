@@ -14,12 +14,16 @@ class ACTIONROGUELIKE_API ASCharacter : public ACharacter
 protected:
 
 	UPROPERTY(EditAnywhere, Category = "Attack")
-	TSubclassOf<AActor> ProjectileClass;
+	TSubclassOf<AActor> BasicProjectile;
 
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	TSubclassOf<AActor> BlackholeProjectile;
+	
 	UPROPERTY(EditAnywhere, Category = "Attack")
 	UAnimMontage* AttackAnim;
 
 	FTimerHandle TimerHandle_PrimaryAttack;
+	FTimerHandle TimerHandle_SecondaryAttack;
 	
 public:
 	// Sets default values for this character's properties
@@ -52,6 +56,13 @@ protected:
 
 	void PrimaryInteract();
 
+	void SecondaryAttack();
+	
+	void SecondaryAttack_TimeElapsed();
+
+private:
+	void SpawnProjectile(TSubclassOf<AActor> Projectile);
+	
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
