@@ -78,6 +78,8 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAction(TEXT("PrimaryInteract"), IE_Pressed, this, &ASCharacter::PrimaryInteract);
 
 	PlayerInputComponent->BindAction(TEXT("SecondaryAttack"), IE_Pressed, this, &ASCharacter::SecondaryAttack);
+
+	PlayerInputComponent->BindAction(TEXT("TeleportAbility"), IE_Pressed, this, &ASCharacter::TeleportAbility);
 	
 	PlayerInputComponent->BindAction(TEXT("Jump"), IE_Pressed, this, &ASCharacter::Jump);
 }
@@ -106,7 +108,7 @@ void ASCharacter::PrimaryAttack()
 {
 	PlayAnimMontage(AttackAnim);
 
-	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, this, &ASCharacter::PrimaryAttack_TimeElapsed, 0.2f);
+	GetWorldTimerManager().SetTimer(TimerHandle_ProjectileAttack, this, &ASCharacter::PrimaryAttack_TimeElapsed, 0.2f);
 }
 
 void ASCharacter::PrimaryAttack_TimeElapsed()
@@ -119,12 +121,25 @@ void ASCharacter::SecondaryAttack()
 {
 	PlayAnimMontage(AttackAnim);
 	
-	GetWorldTimerManager().SetTimer(TimerHandle_SecondaryAttack, this, &ASCharacter::SecondaryAttack_TimeElapsed, 0.2f);
+	GetWorldTimerManager().SetTimer(TimerHandle_ProjectileAttack, this, &ASCharacter::SecondaryAttack_TimeElapsed, 0.2f);
 }
 
 void ASCharacter::SecondaryAttack_TimeElapsed()
 {
 	SpawnProjectile(BlackholeProjectile);
+}
+
+void ASCharacter::TeleportAbility()
+{
+	
+	PlayAnimMontage(AttackAnim);
+	
+	GetWorldTimerManager().SetTimer(TimerHandle_ProjectileAttack, this, &ASCharacter::TeleportAbility_TimeElapsed, 0.2f);
+}
+
+void ASCharacter::TeleportAbility_TimeElapsed()
+{
+	SpawnProjectile(TeleportProjectile);
 }
 
 void ASCharacter::SpawnProjectile(TSubclassOf<AActor> Projectile)

@@ -18,12 +18,14 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Attack")
 	TSubclassOf<AActor> BlackholeProjectile;
+
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	TSubclassOf<AActor> TeleportProjectile;
 	
 	UPROPERTY(EditAnywhere, Category = "Attack")
 	UAnimMontage* AttackAnim;
 
-	FTimerHandle TimerHandle_PrimaryAttack;
-	FTimerHandle TimerHandle_SecondaryAttack;
+	FTimerHandle TimerHandle_ProjectileAttack;
 	
 public:
 	// Sets default values for this character's properties
@@ -59,6 +61,10 @@ protected:
 	void SecondaryAttack();
 	
 	void SecondaryAttack_TimeElapsed();
+
+	void TeleportAbility();
+
+	void TeleportAbility_TimeElapsed();
 
 private:
 	void SpawnProjectile(TSubclassOf<AActor> Projectile);
